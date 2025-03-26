@@ -12,10 +12,15 @@
     <main>
         <div class="welcome-container">
             <h2>Welcome to Learn Baghdad Arabic</h2>
-            <p>This website is designed to help you learn basic Baghdad Arabic phrases, greetings, and numbers.</p>
+            <p>Select a section to start learning:</p>
         </div>
-
-        <!-- Other content will go here -->
+        
+        <!-- Navigation Buttons -->
+        <div class="button-group">
+            <button onclick="goToLesson()">Read new words</button>
+            <button onclick="goToPractice()">Practice pronunciation</button>
+            <button onclick="goToQuiz()">Quiz</button>
+        </div>
 
         <!-- Back to Home Button -->
         <div class="back-to-home">
@@ -28,7 +33,22 @@
 
     <script>
         function goBack() {
-            window.location.href = "index.html";
+            window.history.back(); // Returns to previous page
+        }
+
+        // Links to lesson menu (index-en.html)
+        function goToLesson() {
+            window.location.href = "lessons/index-en.html"; 
+        }
+
+        // Links to practice menu (practice/index-en.html)
+        function goToPractice() {
+            window.location.href = "practice/index-en.html"; 
+        }
+
+        // Links to quiz menu (quiz/index-en.html)
+        function goToQuiz() {
+            window.location.href = "quiz/index-en.html"; 
         }
     </script>
 </body>

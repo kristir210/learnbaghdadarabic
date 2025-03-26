@@ -2,7 +2,7 @@
 <html lang="no">
 <head>
     <meta charset="UTF-8">
-    <title>Lær Bagdad-arabisk (Norsk)</title>
+    <title>Lær Bagdad Arabisk (Norsk)</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -11,11 +11,16 @@
     </header>
     <main>
         <div class="welcome-container">
-            <h2>Velkommen til Lær Bagdad-arabisk</h2>
-            <p>Dette nettstedet er designet for å hjelpe deg med å lære grunnleggende bagdad-arabiske setninger, hilsener og tall.</p>
+            <h2>Velkommen til Lær Bagdad Arabisk</h2>
+            <p>Velg en del for å begynne å lære:</p>
         </div>
-
-        <!-- Other content will go here -->
+        
+        <!-- Navigation Buttons -->
+        <div class="button-group">
+            <button onclick="goToLesson()">Les nye ord</button>
+            <button onclick="goToPractice()">Øv på uttalelse</button>
+            <button onclick="goToQuiz()">Quiz</button>
+        </div>
 
         <!-- Back to Home Button -->
         <div class="back-to-home">
@@ -28,7 +33,22 @@
 
     <script>
         function goBack() {
-            window.location.href = "index.html";
+            window.history.back(); // Returns to previous page
+        }
+
+        // Links to lesson menu (index-no.html)
+        function goToLesson() {
+            window.location.href = "lessons/index-no.html"; 
+        }
+
+        // Links to practice menu (practice/index-no.html)
+        function goToPractice() {
+            window.location.href = "practice/index-no.html"; 
+        }
+
+        // Links to quiz menu (quiz/index-no.html)
+        function goToQuiz() {
+            window.location.href = "quiz/index-no.html"; 
         }
     </script>
 </body>

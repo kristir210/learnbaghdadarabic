@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Choose a category - Learn Baghdad Arabic</title>
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <header>
+        <h1>Learn Baghdad Arabic</h1>
+    </header>
+    <main>
+        <div class="welcome-container">
+            <h2>Select a lesson</h2>
+            <p>Choose a category to start learning:</p>
+        </div>
+        
+        <!-- Category Buttons -->
+        <div class="button-group">
+            <button onclick="goToNumbers()">Numbers</button>
+            <button onclick="goToGreetings()">Greetings</button>
+            <button onclick="goToPhrases()">Common Phrases</button>
+        </div>
+
+        <!-- Back Button -->
+        <div class="back-to-home">
+            <button onclick="goBack()">Back</button>
+        </div>
+    </main>
+    <footer>
+        <p>&copy; 2025 Learn Baghdad Arabic</p>
+    </footer>
+
+    <script>
+        function goBack() {
+            window.history.back(); // Returns to previous page
+        }
+
+        function goToNumbers() {
+            window.location.href = "numbers-en.html"; // Existing numbers page
+        }
+
+        function goToGreetings() {
+            alert("Coming Soon!"); // Placeholder for Greetings
+        }
+
+        function goToPhrases() {
+            alert("Coming Soon!"); // Placeholder for Common Phrases
+        }
+    </script>
+</body>
+</html>

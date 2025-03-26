@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <title>Øvingskategorier - Lær Bagdad Arabisk</title>
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <header>
+        <h1>Lær Bagdad-arabisk</h1>
+    </header>
+    <main>
+        <div class="welcome-container">
+            <h2>Velg en øvingskategori</h2>
+            <p>Velg en kategori for å øve på:</p>
+        </div>
+        
+        <!-- Practice Buttons -->
+        <div class="button-group">
+            <button onclick="goToNumbersPractice()">Tall</button>
+            <button onclick="goToGreetingsPractice()">Hilsener</button>
+            <button onclick="goToPhrasesPractice()">Vanlige fraser</button>
+        </div>
+
+        <!-- Back Button -->
+        <div class="back-to-home">
+            <button onclick="goBack()">Tilbake</button>
+        </div>
+    </main>
+    <footer>
+        <p>&copy; 2025 Lær Bagdad-arabisk</p>
+    </footer>
+
+    <script>
+        function goBack() {
+            window.history.back(); // Returns to previous page
+        }
+
+        function goToNumbersPractice() {
+            window.location.href = "practice-numbers-no.html"; // Existing numbers practice page
+        }
+
+        function goToGreetingsPractice() {
+            alert("Kommer snart!"); // Placeholder
+        }
+
+        function goToPhrasesPractice() {
+            alert("Kommer snart!"); // Placeholder
+        }
+    </script>
+</body>
+</html>
