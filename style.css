@@ -1,0 +1,148 @@
+/* Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Body */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #1a1a1a;
+    color: #ffffff;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Ensures header and footer are at top and bottom */
+}
+
+/* Header */
+header {
+    text-align: center;
+    padding: 20px 0;
+    background-color: #2d2d2d;
+    width: 100%;
+}
+
+header h1 {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+/* Main Content */
+main {
+    max-width: 800px;
+    width: 100%;
+    margin: 0 auto; /* Center the main container horizontally */
+    padding: 40px;
+    text-align: center;
+    flex-grow: 1; /* Allows main content to occupy remaining space */
+}
+
+.welcome-container {
+    margin: 0 auto; /* Center the welcome-container horizontally */
+    max-width: 600px; /* Optional: Limit width for better readability */
+}
+
+.welcome-container h2 {
+    font-size: 28px;
+    margin-bottom: 20px;
+}
+
+.welcome-container p {
+    font-size: 16px;
+    margin-bottom: 30px;
+    color: #aaaaaa;
+}
+
+.button-group {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+button {
+    padding: 15px 40px;
+    border: none;
+    border-radius: 5px;
+    background-color: #4CAF50;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+/* Back to Home Button */
+.back-to-home {
+    position: sticky;
+    bottom: 20px; /* Keep the button near the bottom */
+    text-align: center; /* Center the button horizontally */
+}
+
+.back-to-home button {
+    padding: 15px 40px;
+    border: none;
+    border-radius: 5px;
+    background-color: #4CAF50;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.back-to-home button:hover {
+    background-color: #45a049;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    /* Adjust font sizes for tablets */
+    header h1 {
+        font-size: 20px;
+    }
+
+    .welcome-container h2 {
+        font-size: 24px;
+    }
+
+    .welcome-container p {
+        font-size: 14px;
+    }
+
+    button {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    /* Adjust font sizes for smartphones */
+    header h1 {
+        font-size: 18px;
+    }
+
+    .welcome-container h2 {
+        font-size: 20px;
+    }
+
+    .welcome-container p {
+        font-size: 12px;
+    }
+
+    button {
+        font-size: 12px;
+    }
+}
+
+/* Footer */
+footer {
+    background-color: #2d2d2d;
+    padding: 20px 0;
+    width: 100%;
+    text-align: center;
+    color: #aaaaaa;
+    font-size: 14px;
+}

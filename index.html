@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learn Baghdad Arabic</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <h1>Learn Baghdad Arabic | Lær Bagdad-arabisk</h1>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <div class="welcome-container">
+            <h2>Choose Your Language | Velg språk</h2>
+            <p>Select the language you want to learn with: | Velg språket du vil lære med:</p>
+            <div class="button-group">
+                <button onclick="redirect('en')">English</button>
+                <button onclick="redirect('no')">Norsk</button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2025 Learn Baghdad Arabic | &copy; 2025 Lær Bagdad-arabisk</p>
+    </footer>
+
+    <script>
+        // Redirect function to map language codes to filenames
+        function redirect(lang) {
+            let filename;
+            if (lang === 'en') {
+                filename = 'english.html';
+            } else if (lang === 'no') {
+                filename = 'norsk.html';
+            } else {
+                console.error('Invalid language code:', lang);
+                return;
+            }
+            window.location.href = filename;
+        }
+    </script>
+</body>
+</html>
