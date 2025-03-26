@@ -42,8 +42,8 @@ p {
     color: #ffffff;
 }
 
-/* Buttons */
-.button-group button {
+/* Universal Button Style */
+.site-button {
     background-color: #4CAF50;
     color: white;
     border: none;
@@ -56,10 +56,18 @@ p {
     display: inline-block;
 }
 
-.button-group button:hover {
+.site-button:hover {
     background-color: #45a049;
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Button Containers */
+.button-group,
+.back-to-home,
+.back-button-container {
+    text-align: center;
+    margin: 20px 0;
 }
 
 /* Footer */
@@ -86,7 +94,7 @@ footer {
         font-size: 1.3em;
     }
 
-    button {
+    .site-button {
         font-size: 14px;
         padding: 10px 25px;
     }
@@ -104,5 +112,10 @@ footer {
 
     h2 {
         font-size: 1.2em;
+    }
+
+    .site-button {
+        font-size: 12px;
+        padding: 8px 20px;
     }
 }
