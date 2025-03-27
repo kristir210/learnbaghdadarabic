@@ -63,6 +63,14 @@ p {
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
 
+.lesson-list {
+    list-style-type: none; /* Remove default bullet points */
+    padding-left: 0;      /* Remove default padding */
+    margin: 15px 0;      /* Space above/below the list */
+    line-height: 1.5;    /* Vertical spacing between items */
+    font-size: 0.9em;    /* Slightly smaller text for compactness */
+}
+
 /* Back Button Override */
 .back-to-home .site-button {
     background-color: #ff4444;
