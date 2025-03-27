@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Velg en kategori - Lær Bagdad Arabisk</title>
+    <title>Velg en quiz - Lær Bagdad Arabisk</title>
     <link rel="stylesheet" href="../style.css">
 </head>
 <body>
@@ -12,11 +12,11 @@
     </header>
     <main>
         <div class="welcome-container">
-            <h2>Velg en kategori</h2>
-            <p>Velg en kategori for å begynne å lære:</p>
+            <h2>Velg en quizkategori</h2>
+            <p>Velg en kategori for å teste ditt kunnskap:</p>
         </div>
         
-        <!-- Category Buttons -->
+        <!-- Quiz Category Buttons -->
         <div class="button-group">
             <button class="site-button" onclick="goToNumbers()">Tall</button>
             <button class="site-button" onclick="goToGreetings()">Hilsener</button>
@@ -37,16 +37,18 @@
             window.location.href = "../norsk.html"; // Fixed link
         }
 
+        // Link to Norwegian difficulty page (to be created later)
         function goToNumbers() {
-            window.location.href = "numbers-no.html"; // Existing numbers page
+            window.location.href = "quiz-numbers-difficulty-no.html"; // Future Norwegian difficulty page
         }
 
+        // Temporarily show alerts for other categories
         function goToGreetings() {
-            alert("Kommer snart!"); // Placeholder for Greetings
+            alert("Kommer snart!");
         }
 
         function goToPhrases() {
-            alert("Kommer snart!"); // Placeholder for Common Phrases
+            alert("Kommer snart!");
         }
     </script>
 </body>

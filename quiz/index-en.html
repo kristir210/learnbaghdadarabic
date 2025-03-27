@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Choose a category - Learn Baghdad Arabic</title>
+    <title>Choose a Quiz - Learn Baghdad Arabic</title>
     <link rel="stylesheet" href="../style.css">
 </head>
 <body>
@@ -12,11 +12,11 @@
     </header>
     <main>
         <div class="welcome-container">
-            <h2>Select a lesson</h2>
-            <p>Choose a category to start learning:</p>
+            <h2>Select a Quiz Category</h2>
+            <p>Choose a category to test your knowledge:</p>
         </div>
         
-        <!-- Category Buttons -->
+        <!-- Quiz Category Buttons -->
         <div class="button-group">
             <button class="site-button" onclick="goToNumbers()">Numbers</button>
             <button class="site-button" onclick="goToGreetings()">Greetings</button>
@@ -37,16 +37,18 @@
             window.location.href = "../english.html"; // Fixed link
         }
 
+        // Directly go to difficulty page for Numbers
         function goToNumbers() {
-            window.location.href = "numbers-en.html"; // Existing numbers page
+            window.location.href = "quiz-numbers-difficulty-en.html"; // New difficulty page for Numbers
         }
 
+        // Temporarily show alerts for others
         function goToGreetings() {
-            alert("Coming Soon!"); // Placeholder for Greetings
+            alert("Coming Soon!");
         }
 
         function goToPhrases() {
-            alert("Coming Soon!"); // Placeholder for Common Phrases
+            alert("Coming Soon!");
         }
     </script>
 </body>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Velg vanskelighetsgrad - Tallquiz</title>
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <header>
+        <h1>Lær Bagdad Arabisk</h1>
+    </header>
+    <main>
+        <div class="welcome-container">
+            <h2>Vanskelighetsgrad for tallquiz</h2>
+            <p>Velg ønsket nivå:</p>
+        </div>
+        
+        <!-- Difficulty Buttons -->
+        <div class="button-group">
+            <button class="site-button" onclick="startUnlimited()">Uendelig forsøk</button>
+            <button class="site-button" onclick="startHardMode()">3 forsøk</button>
+        </div>
+
+        <!-- Back Button -->
+        <div class="back-to-home">
+            <button class="site-button" onclick="goBack()">Tilbake til quizmeny</button>
+        </div>
+    </main>
+    <footer>
+        <p>&copy; 2025 Lær Bagdad Arabisk</p>
+    </footer>
+
+    <script>
+        function goBack() {
+            window.location.href = "index-no.html"; // Fixed link
+        }
+
+        // Redirect to Norwegian quiz file (to be created later)
+        function startUnlimited() {
+            window.location.href = "quiz-numbers-no.html?mode=unlimited";
+        }
+
+        function startHardMode() {
+            window.location.href = "quiz-numbers-no.html?mode=hard";
+        }
+    </script>
+</body>
+</html>

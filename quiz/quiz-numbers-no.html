@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tallquiz - Lær Bagdad Arabisk</title>
+    <link rel="stylesheet" href="../style.css">
+    <style>
+        #forsøk-left {
+            margin: 15px 0;
+            color: #ff4444;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Lær Bagdad Arabisk</h1>
+    </header>
+    <main>
+        <div class="welcome-container">
+            <h2>Tallquiz: 1–20</h2>
+            <div id="progress">Spørsmål 1 av 20</div>
+            <div id="forsøk-left" style="display: none;">Forsøk igjen: 3</div>
+        </div>
+
+        <div id="quiz-container">
+            <div id="spørsmål"></div>
+            <div id="alternativer"></div>
+        </div>
+
+        <div id="feedback"></div>
+        <button class="site-button" onclick="nextQuestion()" id="next-btn" disabled>Neste</button>
+        
+        <!-- Back Button -->
+        <div class="back-to-home">
+            <button class="site-button" onclick="goBack()">Tilbake til vanskelighetsgrad</button>
+        </div>
+    </main>
+    <footer>
+        <p>&copy; 2025 Lær Bagdad Arabisk</p>
+    </footer>
+
+    <script>
+        // Norwegian quiz data (1–20)
+        const spørsmålNO = [
+            { q: "Hvordan sier du '1'?", a: "wahid", options: ["tin", "tilaṭ", "arbāʿ", "khams"] },
+            { q: "Hvordan sier du '2'?", a: "tin", options: ["wahid", "ʿashra", "arbāʿ", "khams"] },
+            { q: "Hvordan sier du '3'?", a: "tilaṭ", options: ["wahid", "ʿashra", "arbāʿ", "khams"] },
+            { q: "Hvordan sier du '4'?", a: "arbāʿ", options: ["wahid", "tin", "ʿashra", "khams"] },
+            { q: "Hvordan sier du '5'?", a: "khams", options: ["wahid", "tin", "tilaṭ", "arbāʿ"] },
+            { q: "Hvordan sier du '6'?", a: "sit", options: ["wahid", "tin", "tilaṭ", "ʿashra"] },
+            { q: "Hvordan sier du '7'?", a: "sabʿ", options: ["wahid", "tin", "tilaṭ", "ʿashra"] },
+            { q: "Hvordan sier du '8'?", a: "timāni", options: ["wahid", "tin", "tilaṭ", "arbāʿ"] },
+            { q: "Hvordan sier du '9'?", a: "tisʿ", options: ["wahid", "tin", "ʿashra", "arbāʿ"] },
+            { q: "Hvordan sier du '10'?", a: "ʿashra", options: ["wahid", "tin", "tilaṭ", "arbāʿ"] },
+            { q: "Hvordan sier du '11'?", a: "ʿashra wahid", options: ["ʿashra tin", "ʿashra tilaṭ", "ʿishrun", "timāni"] },
+            { q: "Hvordan sier du '12'?", a: "ʿashra tin", options: ["ʿashra wahid", "ʿashra arbāʿ", "ʿishrun", "timāni"] },
+            { q: "Hvordan sier du '13'?", a: "ʿashra tilaṭ", options: ["ʿashra arbāʿ", "ʿashra khams", "ʿishrun", "timāni"] },
+            { q: "Hvordan sier du '14'?", a: "ʿashra arbāʿ", options: ["ʿashra khams", "ʿashra sit", "ʿishrun", "timāni"] },
+            { q: "Hvordan sier du '15'?", a: "ʿashra khams", options: ["ʿashra sit", "ʿashra sabʿ", "ʿishrun", "timāni"] },
+            { q: "Hvordan sier du '16'?", a: "ʿashra sit", options: ["ʿashra sabʿ", "ʿashra timāni", "ʿishrun", "tisʿ"] },
+            { q: "Hvordan sier du '17'?", a: "ʿashra sabʿ", options: ["ʿashra timāni", "ʿashra tisʿ", "ʿishrun", "arbāʿ"] },
+            { q: "Hvordan sier du '18'?", a: "ʿashra timāni", options: ["ʿashra tisʿ", "ʿishrun", "timāni", "khams"] },
+            { q: "Hvordan sier du '19'?", a: "ʿashra tisʿ", options: ["ʿishrun", "timāni", "tisʿ", "ʿashra"] },
+            { q: "Hvordan sier du '20'?", a: "ʿishrun", options: ["ʿashra", "timāni", "tisʿ", "arbāʿ"] }
+        ];
+
+        // Initialize variables (declared only once)
+        const urlParams = new URLSearchParams(window.location.search);
+        const mode = urlParams.get('mode') || 'unlimited';
+        let forsøkLeft = mode === 'hard' ? 3 : Infinity;
+        let nåværendeSpørsmål = {};
+        let akseptererSvar = true;
+        let poeng = 0;
+        let spørsmålTell = 0;
+        let tilgjengeligeSpørsmål = [...spørsmålNO];
+        let nåværendeForsøk = 0; // Track current attempts per question
+
+        // DOM elements
+        const quizContainer = document.getElementById("quiz-container");
+        const spørsmålEl = document.getElementById("spørsmål");
+        const alternativerEl = document.getElementById("alternativer");
+        const progressText = document.getElementById("progress");
+        const feedbackEl = document.getElementById("feedback");
+        const nesteBtn = document.getElementById("next-btn");
+        const forsøkLeftEl = document.getElementById("forsøk-left");
+
+        // Show attempt counter only in hard mode
+        if (mode === 'hard') {
+            forsøkLeftEl.style.display = 'block';
+        }
+
+        // Shuffle function
+        function shuffleArray(array) {
+            return array.sort(() => Math.random() - 0.5);
+        }
+
+        // Display next question
+        function setNesteSpørsmål() {
+            resetState();
+            if (tilgjengeligeSpørsmål.length > 0) {
+                spørsmålTell++;
+                progressText.textContent = `Spørsmål ${spørsmålTell} av 20`;
+
+                // Pick random question
+                const index = Math.floor(Math.random() * tilgjengeligeSpørsmål.length);
+                nåværendeSpørsmål = tilgjengeligeSpørsmål[index];
+                spørsmålEl.textContent = nåværendeSpørsmål.q;
+
+                // Prepare shuffled options with correct answer
+                const alleAlternativer = shuffleArray([...nåværendeSpørsmål.options, nåværendeSpørsmål.a]);
+                alternativerEl.innerHTML = '';
+                alleAlternativer.forEach(option => {
+                    const knapp = document.createElement("button");
+                    knapp.textContent = option;
+                    knapp.classList.add("site-button", "valg-knapp");
+                    knapp.addEventListener("click", velgSvar);
+                    alternativerEl.appendChild(knapp);
+                });
+
+                // Reset attempts for new question
+                nåværendeForsøk = 0;
+                if (mode === 'hard') {
+                    forsøkLeftEl.textContent = `Forsøk igjen: ${forsøkLeft}`;
+                }
+
+                tilgjengeligeSpørsmål.splice(index, 1); // Remove used question
+            } else {
+                // Quiz completed
+                quizContainer.style.display = "none";
+                nesteBtn.style.display = "none";
+                feedbackEl.textContent = "Du klarte det! Godt gjort!";
+                feedbackEl.style.fontSize = "1.5em";
+            }
+        }
+
+        // Handle answer selection
+        function velgSvar(e) {
+            if (!akseptererSvar) return;
+            const valgtKnapp = e.target;
+            const riktig = valgtKnapp.textContent === nåværendeSpørsmål.a;
+            akseptererSvar = false;
+
+            // Feedback logic
+            if (riktig) {
+                feedbackEl.textContent = "Riktig!";
+                valgtKnapp.style.backgroundColor = "#4CAF50";
+                poeng++;
+                nåværendeForsøk = 0; // Reset attempts on correct answer
+            } else {
+                // Always show correct answer
+                const feilMelding = `Feil! Riktig svar er: ${nåværendeSpørsmål.a}`;
+                feedbackEl.textContent = feilMelding;
+                valgtKnapp.style.backgroundColor = "#ff4444";
+
+                if (mode === 'hard') {
+                    nåværendeForsøk++;
+                    forsøkLeftEl.textContent = `Forsøk igjen: ${forsøkLeft - nåværendeForsøk}`;
+                }
+            }
+
+            // Disable next button until action
+            nesteBtn.disabled = true;
+
+            // In hard mode: Force next question after 3 wrong attempts
+            if (mode === 'hard' && nåværendeForsøk >= forsøkLeft) {
+                feedbackEl.textContent = `Feil! Riktig svar er: ${nåværendeSpørsmål.a}`;
+                alternativerEl.innerHTML = '';
+                nesteBtn.disabled = false;
+            }
+
+            // Re-enable after 1 second
+            setTimeout(() => {
+                akseptererSvar = true;
+                if (riktig || (mode === 'hard' && nåværendeForsøk >= forsøkLeft)) {
+                    nesteBtn.disabled = false;
+                }
+            }, 1000);
+        }
+
+        // Reset state between questions
+        function resetState() {
+            while (alternativerEl.firstChild) {
+                alternativerEl.removeChild(alternativerEl.firstChild);
+            }
+            feedbackEl.textContent = "";
+            document.querySelectorAll(".valg-knapp").forEach(btn => {
+                btn.style.backgroundColor = "#4CAF50";
+            });
+            nesteBtn.disabled = true;
+        }
+
+        // Next question logic
+        function nextQuestion() {
+            if (tilgjengeligeSpørsmål.length > 0) {
+                setNesteSpørsmål();
+            } else {
+                feedbackEl.textContent = "Du klarte det! Godt gjort!";
+                quizContainer.style.display = "none";
+                nesteBtn.style.display = "none";
+            }
+        }
+
+        // Back button
+        function goBack() {
+            window.location.href = "quiz-numbers-difficulty-no.html"; // Back to difficulty page
+        }
+
+        // Initialize quiz
+        setNesteSpørsmål();
+    </script>
+</body>
+</html>
