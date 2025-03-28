@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Choose Difficulty - Greetings Quiz</title>
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <header>
+        <h1>Learn Baghdad Arabic</h1>
+    </header>
+    <main>
+        <div class="welcome-container">
+            <h2>Greetings Quiz Difficulty</h2>
+            <p>Select your preferred mode:</p>
+        </div>
+        
+        <!-- Difficulty Buttons -->
+        <div class="button-group">
+            <button class="site-button" onclick="startUnlimited()">Unlimited Attempts</button>
+            <button class="site-button" onclick="startHardMode()">3 Attempts Challenge</button>
+        </div>
+
+        <!-- Back Button -->
+        <div class="back-to-home">
+            <button class="site-button" onclick="goBack()">Back to Quiz Categories</button>
+        </div>
+    </main>
+    <footer>
+        <p>&copy; 2025 Learn Baghdad Arabic</p>
+    </footer>
+
+    <script>
+        function goBack() {
+            window.location.href = "index-en.html"; // Back to quiz categories
+        }
+
+        // Redirect based on difficulty
+        function startUnlimited() {
+            window.location.href = "quiz-greetings-en.html?mode=unlimited";
+        }
+
+        function startHardMode() {
+            window.location.href = "quiz-greetings-en.html?mode=hard";
+        }
+    </script>
+</body>
+</html>

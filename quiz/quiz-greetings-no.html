@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hilsninger quiz - Lær Bagdad Arabisk</title>
+    <link rel="stylesheet" href="../style.css">
+    <style>
+        #forsøk-left {
+            margin: 15px 0;
+            color: #ff4444;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Lær Bagdad Arabisk</h1>
+    </header>
+    <main>
+        <div class="welcome-container">
+            <h2>Hilsenerquiz: 1–30</h2>
+            <div id="progress">Spørsmål 1 av 30</div>
+            <div id="forsøk-left" style="display: none;">Forsøk igjen: 3</div>
+        </div>
+
+        <div id="quiz-container">
+            <div id="spørsmål"></div>
+            <div id="alternativer"></div>
+        </div>
+
+        <div id="feedback"></div>
+        <button class="site-button" onclick="nesteSpørsmål()" id="neste-btn" disabled>Neste</button>
+        
+        <!-- Tilbake-knapp -->
+        <div class="back-to-home">
+            <button class="site-button" onclick="tilbakeTilVanskelighetsgrad()">Tilbake til vanskelighetsgrad</button>
+        </div>
+    </main>
+    <footer>
+        <p>&copy; 2025 Lær Bagdad Arabisk</p>
+    </footer>
+
+    <script>
+        // Norwegian quiz data (30 spørsmål)
+        const spørsmålNO = [
+            // Neutral spørsmål
+            { 
+                q: "Hvordan sier man 'Hei'?", 
+                a: "marhaba", 
+                options: ["sabaħ al-khayr", "shlounak?", "ma’a as-salāma", "as-salāmu ʿalaykum"] 
+            },
+            { 
+                q: "Hvordan sier man 'God morgen'?", 
+                a: "sabaħ al-khayr", 
+                options: ["masā’ al-khayr", "ma’a as-salāma", "zayn", "as-salāmu ʿalaykum"] 
+            },
+            { 
+                q: "Hvordan sier man 'God kveld'?", 
+                a: "masā’ al-khayr", 
+                options: ["sabaħ al-khayr", "ma’a as-salāma", "ilā al-liqāʾ", "as-salāmu ʿalaykum"] 
+            },
+            { 
+                q: "Hvordan sier man 'Farvel'?", 
+                a: "ma’a as-salāma", 
+                options: ["sabaħ al-khayr", "as-salāmu ʿalaykum", "shlounak?", "ahlan wa sahlan"] 
+            },
+            { 
+                q: "Hvordan sier man 'Velkommen'?", 
+                a: "ahlan wa sahlan", 
+                options: ["as-salāmu ʿalaykum", "ma’a assalāma", "sabaħ al-khair ya sadiqi", "ilā al-liqā’"] 
+            },
+            { 
+                q: "Hvordan sier man 'Hyggelig å møte deg'?", 
+                a: "saʿādat ʿanī qābaltek", 
+                options: ["tayyib", "Allāhu yishkurak", "ana bikhayr", "as-salāmu ʿalayki"] 
+            },
+            { 
+                q: "Hvordan sier man 'Fred være med alle'?", 
+                a: "as-salāmu ʿalaykum jamiʿan", 
+                options: ["ma’a assalāma", "ilā al-liqā’", "sabaħ al-khayr ya sadiqi", "shloun al-ʿayla?"] 
+            },
+            { 
+                q: "Hvordan sier man 'Farvel til en gruppe'?", 
+                a: "ilā al-liqāʾ", 
+                options: ["as-salāmu ʿalaykum jamiʿan", "ma’a assalāma", "shlounich?", "tayyib"] 
+            },
+            { 
+                q: "Hvordan svarer man 'Det går bra'?", 
+                a: "tayyib", 
+                options: ["zayn", "ana bikhayr", "Allāhu yaʿafiyak", "as-salāmu ʿalaykum"] 
+            },
+            { 
+                q: "Hvordan spør man 'Hvordan går det med familien?'", 
+                a: "shloun al-ʿayla?", 
+                options: ["shlounak?", "zayn", "Allāhu yishkurak", "ma’a assalāma"] 
+            },
+
+            // Hankjønn spørsmål
+            { 
+                q: "Hvordan spør du 'Hva gjør du?' til en mann?", 
+                a: "shlounak?", 
+                options: ["shlounich?", "Allāhu yaʿafiyak", "sabaħ al-khair ya sadiqi", "ma’a assalāma"] 
+            },
+            { 
+                q: "Hvordan svarer en mann 'Jeg er bra, takk'?", 
+                a: "ana bikhayr, shukran", 
+                options: ["tayyib", "Allāhu yahdīyak", "ani bikhayr, shukran", "as-salāmu ʿalayki"] 
+            },
+            { 
+                q: "Hvordan sier man 'Fred være med deg' til en mann?", 
+                a: "as-salāmu ʿalayka", 
+                options: ["as-salām ʿalaych", "ma’a assalāma", "ilā al-liqāʾ", "sabaħ al-khayr ya sadiqi"] 
+            },
+            { 
+                q: "Hvordan svarer man til 'Fred være med deg' (enkel mann)?", 
+                a: "wa ʿalayka as-salām", 
+                options: ["as-salām ʿalaych", "shlounich?", "ma’a assalāma", "ilā al-liqāʾ"] 
+            },
+            { 
+                q: "Hvordan sier man 'Gud bevar deg' til en mann?", 
+                a: "Allāhu yaʿafiyak", 
+                options: ["Allāhu yishkurak", "sabaħ al-khayr ya sadiqi", "zayn", "as-salāmu ʿalaykum"] 
+            },
+            { 
+                q: "Hvordan sier man 'God morgen (uformelt)' til en mann?", 
+                a: "sabaħ al-khayr ya sadiqi", 
+                options: ["masā’ al-khayr ya sadiqti", "shlounich?", "Allāhu yubāriklik", "ma’a assalāma"] 
+            },
+            { 
+                q: "Hvordan sier man 'God kveld (uformelt)' til en mann?", 
+                a: "masā’ al-khayr ya sadiqi", 
+                options: ["sabaħ al-khayr ya sadiqti", "shlounich?", "tayyib", "as-salāmu ʿalayki"] 
+            },
+            { 
+                q: "Hvordan spør du 'Hva gjør du i dag?' til en mann?", 
+                a: "shlounak al-yawm?", 
+                options: ["shlounich al-yawm?", "Allāhu yishkurak", "zayn", "as-salāmu ʿalaykum"] 
+            },
+            { 
+                q: "Hvordan sier man 'Gud før deg vei' til en mann?", 
+                a: "Allāhu yahdik", 
+                options: ["Allāhu yaʿafiyach", "ma’a assalāma", "ilā al-liqāʾ", "sabaħ al-khair ya sadiqi"] 
+            },
+            { 
+                q: "Hvordan sier man 'Gud gi deg lykke' til en mann?", 
+                a: "Allāhu yubāriklik", 
+                options: ["Allāhu yishkurich", "masā’ al-khayr ya sadiqti", "tayyib", "as-salāmu ʿalayki"] 
+            },
+
+            // Hunkjønn spørsmål
+            { 
+                q: "Hvordan spør du 'Hva gjør du?' til en kvinne?", 
+                a: "shlounich?", 
+                options: ["shlounak?", "Allāhu yaʿafiyach", "sabaħ al-khayr ya sadiqti", "ma’a assalāma"] 
+            },
+            { 
+                q: "Hvordan svarer en kvinne 'Jeg er bra, takk'?", 
+                a: "ani bikhayr, shukran", 
+                options: ["ana bikhayr, shukran", "tayyib", "Allāhu yishkurich", "as-salāmu ʿalaykum"] 
+            },
+            { 
+                q: "Hvordan sier man 'Fred være med deg' til en kvinne?", 
+                a: "as-salām ʿalaych", 
+                options: ["as-salāmu ʿalayka", "ma’a assalāma", "ilā al-liqāʾ", "sabaħ al-khayr ya sadiqti"] 
+            },
+            { 
+                q: "Hvordan svarer man til 'Fred være med deg' (enkel kvinne)?", 
+                a: "wa ʿalaych as-salām", 
+                options: ["as-salām ʿalayka", "shlounak?", "tayyib", "sabaħ al-khayr ya sadiqti"] 
+            },
+            { 
+                q: "Hvordan sier man 'Gud bevar deg' til en kvinne?", 
+                a: "Allāhu yaʿafiyach", 
+                options: ["Allāhu yishkurak", "as-salām ʿalaych", "shlounak?", "ilā al-liqāʾ"] 
+            },
+            { 
+                q: "Hvordan sier man 'God morgen (uformelt)' til en kvinne?", 
+                a: "sabaħ al-khayr ya sadiqti", 
+                options: ["masā’ al-khayr ya sadiqti", "shlounich?", "Allāhu yubāriklich", "ma’a assalāma"] 
+            },
+            { 
+                q: "Hvordan sier man 'God kveld (uformelt)' til en kvinne?", 
+                a: "masā’ al-khayr ya sadiqti", 
+                options: ["sabaħ al-khayr ya sadiqi", "shlounak al-yawm?", "tayyib", "as-salāmu ʿalayka"] 
+            },
+            { 
+                q: "Hvordan spør du 'Hva gjør du i dag?' til en kvinne?", 
+                a: "shlounich al-yawm?", 
+                options: ["shlounak al-yawm?", "Allāhu yishkurak", "zayn", "as-salāmu ʿalayka"] 
+            },
+            { 
+                q: "Hvordan sier man 'Gud før deg vei' til en kvinne?", 
+                a: "Allāhu yahdich", 
+                options: ["Allāhu yaʿafiyak", "ma’a assalāma", "ilā al-liqāʾ", "sabaħ al-khayr ya sadiqti"] 
+            },
+            { 
+                q: "Hvordan sier man 'Gud gi deg lykke' til en kvinne?", 
+                a: "Allāhu yubāriklich", 
+                options: ["Allāhu yishkurak", "masā’ al-khayr", "tayyib", "as-salāmu ʿalayka"] 
+            },
+
+            // Mixed spørsmål
+            { 
+                q: "Hvordan svarer man til 'Fred være med deg' (flertall)?", 
+                a: "wa ʿalaykum as-salām", 
+                options: ["as-salāmu ʿalaykum", "shlounich?", "tayyib", "ilā al-liqāʾ"] 
+            },
+            { 
+                q: "Hvordan sier man 'Fred være med dere'?", 
+                a: "as-salāmu ʿalaykum", 
+                options: ["wa ʿalaykum as-salām", "Allāhu yaʿafiyak", "sabaħ al-khair", "ma’a assalāma"] 
+            },
+            { 
+                q: "Hvordan sier man 'Og også med dere'?", 
+                a: "wa ʿalaykum as-salām", 
+                options: ["as-salāmu ʿalaykum", "shlounak?", "tayyib", "sabaħ al-khayr ya sadiqti"] 
+            },
+            { 
+                q: "Hvordan sier man 'Og også med deg' (enkel mann)?", 
+                a: "wa ʿalayka as-salām", 
+                options: ["as-salām ʿalaych", "shlounich?", "ma’a assalāma", "sabaħ al-khayr ya sadiqti"] 
+            },
+            { 
+                q: "Hvordan sier man 'Og også med deg' (enkel kvinne)?", 
+                a: "wa ʿalaych as-salām", 
+                options: ["as-salām ʿalayka", "shlounak?", "tayyib", "sabaħ al-khayr ya sadiqi"] 
+            },
+            { 
+                q: "Hvordan sier man 'Gud bevar deg' ( kvinne )?", 
+                a: "Allāhu yaʿafiyach", 
+                options: ["Allāhu yishkurich", "as-salām ʿalaych", "shlounak?", "ilā al-liqāʾ"] 
+            },
+            { 
+                q: "Hvordan sier man 'Gud før deg vei' til en mann?", 
+                a: "Allāhu yahdik", 
+                options: ["Allāhu yaʿafiyach", "ma’a assalāma", "ilā al-liqāʾ", "sabaħ al-khayr ya sadiqi"] 
+            },
+            { 
+                q: "Hvordan sier man 'Gud før deg vei' til en kvinne?", 
+                a: "Allāhu yahdich", 
+                options: ["Allāhu yaʿafiyak", "masā’ al-khayr", "tayyib", "as-salāmu ʿalayka"] 
+            },
+            { 
+                q: "Hvordan sier man 'Gud gi deg lykke' til en mann?", 
+                a: "Allāhu yubāriklik", 
+                options: ["Allāhu yishkurak", "as-salām ʿalaych", "shlounich?", "ilā al-liqāʾ"] 
+            },
+            { 
+                q: "Hvordan sier man 'Gud gi deg lykke' til en kvinne?", 
+                a: "Allāhu yubāriklich", 
+                options: ["Allāhu yishkurak", "masā’ al-khayr", "tayyib", "as-salāmu ʿalayka"] 
+            },
+            { 
+                q: "Hvordan spør man 'Hvordan går det med familien?'", 
+                a: "shloun al-ʿayla?", 
+                options: ["shlounak?", "zayn", "Allāhu yishkurak", "ma’a assalāma"] 
+            },
+            { 
+                q: "Hvordan sier man 'Farvel til en gruppe'?", 
+                a: "ilā al-liqāʾ", 
+                options: ["as-salāmu ʿalaykum jamiʿan", "shlounich?", "tayyib", "ma’a assalāma"] 
+            },
+            { 
+                q: "Hvordan sier man 'Fred være med deg' (enkel mann)?", 
+                a: "as-salāmu ʿalayka", 
+                options: ["as-salām ʿalaych", "ma’a assalāma", "ilā al-liqāʾ", "sabaħ al-khayr ya sadiqi"] 
+            },
+            { 
+                q: "Hvordan sier man 'Fred være med deg' (enkel kvinne)?", 
+                a: "as-salām ʿalaych", 
+                options: ["as-salāmu ʿalayka", "shlounak?", "tayyib", "sabaħ al-khayr ya sadiqi"] 
+            },
+            { 
+                q: "Hvordan sier man 'Og også med deg' (enkel mann)?", 
+                a: "wa ʿalayka as-salām", 
+                options: ["as-salām ʿalaych", "shlounich?", "ma’a assalāma", "sabaħ al-khayr ya sadiqti"] 
+            },
+            { 
+                q: "Hvordan sier man 'Og også med deg' (enkel kvinne)?", 
+                a: "wa ʿalaych as-salām", 
+                options: ["as-salām ʿalayka", "shlounak?", "tayyib", "sabaħ al-khayr ya sadiqi"] 
+            },
+            { 
+                q: "Hvordan sier man 'God morgen (uformelt)' til en kvinne?", 
+                a: "sabaħ al-khayr ya sadiqti", 
+                options: ["masā’ al-khayr ya sadiqti", "shlounich?", "Allāhu yubāriklich", "ma’a assalāma"] 
+            },
+            { 
+                q: "Hvordan sier man 'God kveld (uformelt)' til en kvinne?", 
+                a: "masā’ al-khayr ya sadiqti", 
+                options: ["sabaħ al-khayr ya sadiqi", "shlounak al-yawm?", "tayyib", "as-salāmu ʿalayka"] 
+            },
+            { 
+                q: "Hvordan spør du 'Hva gjør du i dag?' til en kvinne?", 
+                a: "shlounich al-yawm?", 
+                options: ["shlounak al-yawm?", "Allāhu yishkurak", "zayn", "as-salāmu ʿalayka"] 
+            }
+        ];
+
+        // Quiz Logic (3 total forsøk)
+        const urlParams = new URLSearchParams(window.location.search);
+        const mode = urlParams.get('mode') || 'unlimited';
+        let totalForsøkIgjen = mode === 'hard' ? 3 : Infinity;
+        let nåværendeSpørsmål = {};
+        let akseptererSvar = true;
+        let poeng = 0;
+        let spørsmålNummer = 0;
+        let tilgjengeligeSpørsmål = [...spørsmålNO]; // Kopier spørsmålene
+
+        const quizContainer = document.getElementById('quiz-container');
+        const spørsmålEl = document.getElementById('spørsmål');
+        const alternativerEl = document.getElementById('alternativer');
+        const progressText = document.getElementById('progress');
+        const feedbackEl = document.getElementById('feedback');
+        const nesteBtn = document.getElementById('neste-btn');
+        const forsøkLeftEl = document.getElementById('forsøk-left');
+
+        // Vis forsøks-teller kun i hardmodus
+        if (mode === 'hard') {
+            forsøkLeftEl.style.display = 'block';
+        }
+
+        // Blanding funksjon
+        function shuffleArray(array) {
+            return array.sort(() => Math.random() - 0.5);
+        }
+
+        // Vis neste spørsmål
+        function setNesteSpørsmål() {
+            resetState();
+            if (tilgjengeligeSpørsmål.length > 0 && totalForsøkIgjen > 0) {
+                spørsmålNummer++;
+                progressText.textContent = `Spørsmål ${spørsmålNummer} av ${spørsmålNO.length}`;
+                
+                // Velg tilfeldig spørsmål
+                const spørsmålIndex = Math.floor(Math.random() * tilgjengeligeSpørsmål.length);
+                nåværendeSpørsmål = tilgjengeligeSpørsmål[spørsmålIndex];
+                spørsmålEl.textContent = nåværendeSpørsmål.q;
+
+                // Bland alternativene + legg til riktig svar
+                const alternativ = shuffleArray([...nåværendeSpørsmål.options, nåværendeSpørsmål.a]);
+                alternativerEl.innerHTML = '';
+                alternativ.forEach(option => {
+                    const knapp = document.createElement('button');
+                    knapp.textContent = option;
+                    knapp.classList.add('site-button', 'valg-knapp');
+                    knapp.addEventListener('click', velgSvar);
+                    alternativerEl.appendChild(knapp);
+                });
+
+                tilgjengeligeSpørsmål.splice(spørsmålIndex, 1); // Fjern brukt spørsmål
+            } else {
+                // Quiz fullført eller uten forsøk
+                quizContainer.style.display = 'none';
+                nesteBtn.style.display = 'none';
+                if (totalForsøkIgjen <= 0 && mode === 'hard') {
+                    feedbackEl.textContent = 'Du har brukt alle forsøkene! Vennligst prøv igjen.';
+                } else {
+                    feedbackEl.textContent = `Du fikk ${poeng}/${spørsmålNO.length} riktig! Godt gjort!`;
+                }
+                feedbackEl.style.fontSize = '1.5em';
+            }
+        }
+
+        // Håndter svarvalg
+        function velgSvar(e) {
+            if (!akseptererSvar || totalForsøkIgjen <= 0) return;
+            const valgtKnapp = e.target;
+            const riktig = valgtKnapp.textContent === nåværendeSpørsmål.a;
+            akseptererSvar = false;
+
+            // Feedback
+            if (riktig) {
+                feedbackEl.textContent = 'Riktig!';
+                valgtKnapp.style.backgroundColor = '#4CAF50';
+                poeng++;
+            } else {
+                feedbackEl.textContent = `Feil! Riktig svar er: ${nåværendeSpørsmål.a}`;
+                valgtKnapp.style.backgroundColor = '#ff4444';
+                totalForsøkIgjen--;
+                forsøkLeftEl.textContent = `Forsøk igjen: ${totalForsøkIgjen}`;
+            }
+
+            // Oppdater forsøks-teller i hardmodus
+            if (mode === 'hard') {
+                forsøkLeftEl.textContent = `Forsøk igjen: ${totalForsøkIgjen}`;
+            }
+
+            // Deaktiver neste-knapp midlertidig
+            nesteBtn.disabled = true;
+
+            // Sjekk om utbrukt forsøk
+            if (totalForsøkIgjen <= 0 && mode === 'hard') {
+                quizContainer.style.display = 'none';
+                nesteBtn.style.display = 'none';
+                feedbackEl.textContent = 'Du har brukt alle forsøkene! Vennligst prøv igjen.';
+            }
+
+            // Aktiver knapp etter 1 sekund
+            setTimeout(() => {
+                akseptererSvar = true;
+                nesteBtn.disabled = false;
+            }, 1000);
+        }
+
+        // Nullstill mellom spørsmål
+        function resetState() {
+            while (alternativerEl.firstChild) {
+                alternativerEl.removeChild(alternativerEl.firstChild);
+            }
+            feedbackEl.textContent = '';
+            document.querySelectorAll('.valg-knapp').forEach(btn => {
+                btn.style.backgroundColor = '#4CAF50';
+            });
+            nesteBtn.disabled = true;
+        }
+
+        // Neste spørsmål logikk
+        function nesteSpørsmål() {
+            if (tilgjengeligeSpørsmål.length > 0 && totalForsøkIgjen > 0) {
+                setNesteSpørsmål();
+            }
+        }
+
+        // Tilbake-knapp
+        function tilbakeTilVanskelighetsgrad() {
+            window.location.href = 'quiz-greetings-difficulty-no.html'; // Fix: "difficulty" → "difficulty"
+        }
+
+        // Initialiser quiz
+        function startQuiz() {
+            setNesteSpørsmål();
+        }
+        startQuiz();
+    </script>
+</body>
+</html>

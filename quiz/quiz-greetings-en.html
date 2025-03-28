@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Greetings Quiz - Learn Baghdad Arabic</title>
+    <link rel="stylesheet" href="../style.css">
+    <style>
+        #attempts-left {
+            margin: 15px 0;
+            color: #ff4444;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Learn Baghdad Arabic</h1>
+    </header>
+    <main>
+        <div class="welcome-container">
+            <h2>Greetings Quiz: 1–30</h2>
+            <div id="progress">Question 1 of 30</div>
+            <div id="attempts-left" style="display: none;">Attempts left: 3</div>
+        </div>
+
+        <div id="quiz-container">
+            <div id="question"></div>
+            <div id="options"></div>
+        </div>
+
+        <div id="feedback"></div>
+        <button class="site-button" onclick="nextQuestion()" id="next-btn" disabled>Next</button>
+        
+        <!-- Back Button -->
+        <div class="back-to-home">
+            <button class="site-button" onclick="goBack()">Back to Difficulty Menu</button>
+        </div>
+    </main>
+    <footer>
+        <p>&copy; 2025 Learn Baghdad Arabic</p>
+    </footer>
+
+    <script>
+        // Quiz Questions (30 questions with gender-specific options)
+        const questions = [
+            // Neutral questions (no gender)
+            { 
+                q: "How do you say 'Hello/Hi' in Baghdadi Arabic?", 
+                a: "marhaba", 
+                options: ["sabaħ al-khayr", "shlounak?", "ma’a as-salāma", "as-salāmu ʿalaykum"] 
+            },
+            { 
+                q: "How do you say 'Good morning'?", 
+                a: "sabaħ al-khayr", 
+                options: ["masā’ al-khayr", "ma’a as-salāma", "zayn", "as-salāmu ʿalaykum"] 
+            },
+            { 
+                q: "How do you say 'Good evening'?", 
+                a: "masā’ al-khayr", 
+                options: ["sabaħ al-khayr", "ma’a as-salāma", "ilā al-liqāʾ", "as-salāmu ʿalaykum"] 
+            },
+            { 
+                q: "How do you say 'Goodbye'?", 
+                a: "ma’a as-salāma", 
+                options: ["sabaħ al-khayr", "as-salāmu ʿalaykum", "shlounak?", "ahlan wa sahlan"] 
+            },
+            { 
+                q: "How do you say 'Welcome'?", 
+                a: "ahlan wa sahlan", 
+                options: ["as-salāmu ʿalaykum", "ma’a assalāma", "sabaħ al-khair ya sadiqi", "ilā al-liqāʾ"] 
+            },
+            { 
+                q: "How do you say 'Pleased to meet you'?", 
+                a: "saʿādat ʿanī qābaltek", 
+                options: ["tayyib", "Allāhu yishkurak", "ana bikhayr", "as-salāmu ʿalaykum"] 
+            },
+            { 
+                q: "How do you say 'May peace be with you all'?", 
+                a: "as-salāmu ʿalaykum jamiʿan", 
+                options: ["ma’a assalāma", "ilā al-liqāʾ", "sabaħ al-khayr ya sadiqi", "shloun al-ʿayla?"] 
+            },
+            { 
+                q: "How do you say 'Goodbye to a group'?", 
+                a: "ilā al-liqāʾ", 
+                options: ["as-salāmu ʿalaykum jamiʿan", "ma’a assalāma", "shlounak?", "tayyib"] 
+            },
+            { 
+                q: "How do you respond 'Things are good'?", 
+                a: "tayyib", 
+                options: ["zayn", "ana bikhayr", "Allāhu yaʿafiyak", "as-salāmu ʿalaykum"] 
+            },
+            { 
+                q: "How do you ask 'How are the family?'", 
+                a: "shloun al-ʿayla?", 
+                options: ["shlounak?", "zayn", "Allāhu yishkurak", "ma’a assalāma"] 
+            },
+
+            // Male-specific questions
+            { 
+                q: "How do you ask 'How are you?' to a male?", 
+                a: "shlounak?", 
+                options: ["shlounich?", "Allāhu yaʿafiyak", "sabaħ al-khair ya sadiqi", "ma’a assalāma"] 
+            },
+            { 
+                q: "How do you respond 'I’m fine, thank you' as a male?", 
+                a: "ana bikhayr, shukran", 
+                options: ["tayyib", "Allāhu yahdīyak", "ani bikhayr, shukran", "as-salāmu ʿalayki"] 
+            },
+            { 
+                q: "How do you say 'Peace be upon you' to a male?", 
+                a: "as-salāmu ʿalayka", 
+                options: ["as-salām ʿalaych", "ma’a assalāma", "ilā al-liqāʾ", "sabaħ al-khayr ya sadiqi"] 
+            },
+            { 
+                q: "How do you reply to 'Peace be upon you' (singular male)?", 
+                a: "wa ʿalayka as-salām", 
+                options: ["as-salām ʿalaych", "shlounich?", "ma’a assalāma", "ilā al-liqāʾ"] 
+            },
+            { 
+                q: "How do you say 'God keep you safe' to a male?", 
+                a: "Allāhu yaʿafiyak", 
+                options: ["Allāhu yishkurak", "sabaħ al-khayr ya sadiqi", "zayn", "as-salāmu ʿalaykum"] 
+            },
+            { 
+                q: "How do you say 'Good morning' informally to a male?", 
+                a: "sabaħ al-khayr ya sadiqi", 
+                options: ["masā’ al-khayr ya sadiqti", "shlounich?", "Allāhu yubāriklik", "ma’a assalāma"] 
+            },
+            { 
+                q: "How do you say 'Good evening' informally to a male?", 
+                a: "masā’ al-khayr ya sadiqi", 
+                options: ["sabaħ al-khayr ya sadiqti", "shlounich?", "tayyib", "as-salāmu ʿalayki"] 
+            },
+            { 
+                q: "How do you ask 'How are you today?' to a male?", 
+                a: "shlounak al-yawm?", 
+                options: ["shlounich al-yawm?", "Allāhu yishkurak", "zayn", "as-salāmu ʿalaykum"] 
+            },
+            { 
+                q: "How do you say 'May God guide you' to a male?", 
+                a: "Allāhu yahdik", 
+                options: ["Allāhu yaʿafiyach", "ma’a assalāma", "ilā al-liqāʾ", "sabaħ al-khair ya sadiqi"] 
+            },
+            { 
+                q: "How do you say 'God bless you' to a male?", 
+                a: "Allāhu yubāriklik", 
+                options: ["Allāhu yishkurich", "masā’ al-khayr ya sadiqti", "tayyib", "as-salāmu ʿalayki"] 
+            },
+
+            // Female-specific questions
+            { 
+                q: "How do you ask 'How are you?' to a female?", 
+                a: "shlounich?", 
+                options: ["shlounak?", "Allāhu yaʿafiyach", "sabaħ al-khayr ya sadiqti", "ma’a assalāma"] 
+            },
+            { 
+                q: "How do you respond 'I’m fine, thank you' as a female?", 
+                a: "ani bikhayr, shukran", 
+                options: ["ana bikhayr, shukran", "tayyib", "Allāhu yishkurich", "as-salāmu ʿalaykum"] 
+            },
+            { 
+                q: "How do you say 'Peace be upon you' to a female?", 
+                a: "as-salām ʿalaych", 
+                options: ["as-salāmu ʿalayka", "ma’a assalāma", "ilā al-liqāʾ", "sabaħ al-khayr ya sadiqti"] 
+            },
+            { 
+                q: "How do you reply to 'Peace be upon you' (singular female)?", 
+                a: "wa ʿalaych as-salām", 
+                options: ["as-salām ʿalayka", "shlounak?", "tayyib", "sabaħ al-khayr ya sadiqti"] 
+            },
+            { 
+                q: "How do you say 'God keep you safe' to a female?", 
+                a: "Allāhu yaʿafiyach", 
+                options: ["Allāhu yishkurak", "as-salām ʿalaych", "shlounak?", "ilā al-liqāʾ"] 
+            },
+            { 
+                q: "How do you say 'Good morning' informally to a female?", 
+                a: "sabaħ al-khayr ya sadiqti", 
+                options: ["masā’ al-khayr ya sadiqti", "shlounich?", "Allāhu yubāriklich", "ma’a assalāma"] 
+            },
+            { 
+                q: "How do you say 'Good evening' informally to a female?", 
+                a: "masā’ al-khayr ya sadiqti", 
+                options: ["sabaħ al-khayr ya sadiqi", "shlounak al-yawm?", "tayyib", "as-salāmu ʿalayka"] 
+            },
+            { 
+                q: "How do you ask 'How are you today?' to a female?", 
+                a: "shlounich al-yawm?", 
+                options: ["shlounak al-yawm?", "Allāhu yishkurak", "zayn", "as-salāmu ʿalayka"] 
+            },
+            { 
+                q: "How do you say 'May God guide you' to a female?", 
+                a: "Allāhu yahdich", 
+                options: ["Allāhu yaʿafiyak", "ma’a assalāma", "ilā al-liqāʾ", "sabaħ al-khayr ya sadiqti"] 
+            },
+            { 
+                q: "How do you say 'God bless you' to a female?", 
+                a: "Allāhu yubāriklich", 
+                options: ["Allāhu yishkurak", "masā’ al-khayr", "tayyib", "as-salāmu ʿalayka"] 
+            },
+
+            // Mixed questions (gender-neutral phrasing)
+            { 
+                q: "How do you reply to 'Peace be upon you' (plural)?", 
+                a: "wa ʿalaykum as-salām", 
+                options: ["as-salāmu ʿalaykum", "shlounak?", "tayyib", "ilā al-liqāʾ"] 
+            },
+            { 
+                q: "How do you say 'Peace be upon you' to a group?", 
+                a: "as-salāmu ʿalaykum", 
+                options: ["wa ʿalaykum as-salām", "Allāhu yaʿafiyak", "sabaħ al-khair", "ma’a assalāma"] 
+            },
+            { 
+                q: "How do you say 'And also on you' (plural)?", 
+                a: "wa ʿalaykum as-salām", 
+                options: ["as-salāmu ʿalaykum", "shlounich?", "tayyib", "ilā al-liqāʾ"] 
+            },
+            { 
+                q: "How do you say 'And also on you' (singular male)?", 
+                a: "wa ʿalayka as-salām", 
+                options: ["as-salām ʿalaych", "shlounich?", "ma’a assalāma", "sabaħ al-khayr ya sadiqti"] 
+            },
+            { 
+                q: "How do you say 'And also on you' (singular female)?", 
+                a: "wa ʿalaych as-salām", 
+                options: ["as-salām ʿalayka", "shlounak?", "tayyib", "sabaħ al-khayr ya sadiqi"] 
+            },
+            { 
+                q: "How do you say 'May peace be with you all'?", 
+                a: "as-salāmu ʿalaykum jamiʿan", 
+                options: ["ma’a assalāma", "ilā al-liqāʾ", "sabaħ al-khayr ya sadiqti", "shlounich?"] 
+            },
+            { 
+                q: "How do you say 'God keep you safe' (female)?", 
+                a: "Allāhu yaʿafiyach", 
+                options: ["Allāhu yishkurich", "as-salām ʿalaych", "shlounak?", "ilā al-liqāʾ"] 
+            },
+            { 
+                q: "How do you say 'May God guide you' (male)?", 
+                a: "Allāhu yahdik", 
+                options: ["Allāhu yaʿafiyach", "ma’a assalāma", "ilā al-liqāʾ", "sabaħ al-khayr ya sadiqi"] 
+            },
+            { 
+                q: "How do you say 'May God guide you' (female)?", 
+                a: "Allāhu yahdich", 
+                options: ["Allāhu yaʿafiyak", "masā’ al-khayr", "tayyib", "as-salāmu ʿalayka"] 
+            },
+            { 
+                q: "How do you say 'God bless you' (male)?", 
+                a: "Allāhu yubāriklik", 
+                options: ["Allāhu yishkurak", "as-salām ʿalaych", "shlounich?", "ilā al-liqāʾ"] 
+            },
+            { 
+                q: "How do you say 'God bless you' (female)?", 
+                a: "Allāhu yubāriklich", 
+                options: ["Allāhu yishkurak", "masā’ al-khayr", "tayyib", "as-salāmu ʿalayka"] 
+            },
+            { 
+                q: "How do you ask 'How are the family?'", 
+                a: "shloun al-ʿayla?", 
+                options: ["shlounak?", "zayn", "Allāhu yishkurak", "ma’a assalāma"] 
+            },
+            { 
+                q: "How do you say 'Goodbye to a group'?", 
+                a: "ilā al-liqāʾ", 
+                options: ["as-salāmu ʿalaykum jamiʿan", "shlounich?", "tayyib", "ma’a assalāma"] 
+            },
+            { 
+                q: "How do you say 'Peace be upon you' (singular male)?", 
+                a: "as-salāmu ʿalayka", 
+                options: ["as-salām ʿalaych", "ma’a assalāma", "ilā al-liqāʾ", "sabaħ al-khayr ya sadiqi"] 
+            },
+            { 
+                q: "How do you say 'Peace be upon you' (singular female)?", 
+                a: "as-salām ʿalaych", 
+                options: ["as-salāmu ʿalayka", "shlounak?", "tayyib", "sabaħ al-khayr ya sadiqti"] 
+            },
+            { 
+                q: "How do you say 'And also on you' (singular male)?", 
+                a: "wa ʿalayka as-salām", 
+                options: ["as-salām ʿalaych", "shlounich?", "ma’a assalāma", "sabaħ al-khayr ya sadiqti"] 
+            },
+            { 
+                q: "How do you say 'And also on you' (singular female)?", 
+                a: "wa ʿalaych as-salām", 
+                options: ["as-salām ʿalayka", "shlounak?", "tayyib", "sabaħ al-khayr ya sadiqi"] 
+            },
+            { 
+                q: "How do you say 'God keep you safe' (male)?", 
+                a: "Allāhu yaʿafiyak", 
+                options: ["Allāhu yishkurak", "as-salām ʿalaych", "shlounich?", "ilā al-liqāʾ"] 
+            },
+            { 
+                q: "How do you say 'Good morning' informally to a female?", 
+                a: "sabaħ al-khayr ya sadiqti", 
+                options: ["masā’ al-khayr ya sadiqti", "shlounich?", "Allāhu yubāriklich", "ma’a assalāma"] 
+            },
+            { 
+                q: "How do you say 'Good evening' informally to a female?", 
+                a: "masā’ al-khayr ya sadiqti", 
+                options: ["sabaħ al-khayr ya sadiqi", "shlounak al-yawm?", "tayyib", "as-salāmu ʿalayka"] 
+            },
+            { 
+                q: "How do you ask 'How are you today?' to a female?", 
+                a: "shlounich al-yawm?", 
+                options: ["shlounak al-yawm?", "Allāhu yishkurak", "zayn", "as-salāmu ʿalayka"] 
+            }
+        ];
+
+        // Quiz Logic (3 total attempts)
+        const urlParams = new URLSearchParams(window.location.search);
+        const mode = urlParams.get('mode') || 'unlimited';
+        let totalAttemptsLeft = mode === 'hard' ? 3 : Infinity;
+        let currentQuestion = {};
+        let acceptingAnswers = true;
+        let score = 0;
+        let questionNumber = 0;
+        let availableQuestions = [...questions]; // Copy questions array
+
+        const quizContainer = document.getElementById('quiz-container');
+        const questionEl = document.getElementById('question');
+        const optionsEl = document.getElementById('options');
+        const progressText = document.getElementById('progress');
+        const feedbackEl = document.getElementById('feedback');
+        const nextBtn = document.getElementById('next-btn');
+        const attemptsLeftEl = document.getElementById('attempts-left');
+
+        // Show attempts counter only in hard mode
+        if (mode === 'hard') {
+            attemptsLeftEl.style.display = 'block';
+        }
+
+        // Shuffle questions and options
+        function shuffleArray(array) {
+            return array.sort(() => Math.random() - 0.5);
+        }
+
+        // Set next question
+        function setNextQuestion() {
+            resetState();
+            if (availableQuestions.length > 0 && totalAttemptsLeft > 0) {
+                questionNumber++;
+                progressText.textContent = `Question ${questionNumber} of ${questions.length}`;
+                
+                // Pick random question
+                const questionIndex = Math.floor(Math.random() * availableQuestions.length);
+                currentQuestion = availableQuestions[questionIndex];
+                questionEl.textContent = currentQuestion.q;
+
+                // Shuffle options + add correct answer
+                const options = shuffleArray([...currentQuestion.options, currentQuestion.a]);
+                optionsEl.innerHTML = '';
+                options.forEach(option => {
+                    const button = document.createElement('button');
+                    button.textContent = option;
+                    button.classList.add('site-button', 'option-btn');
+                    button.addEventListener('click', selectAnswer);
+                    optionsEl.appendChild(button);
+                });
+
+                availableQuestions.splice(questionIndex, 1); // Remove used question
+            } else {
+                // Quiz completed or out of attempts
+                quizContainer.style.display = 'none';
+                nextBtn.style.display = 'none';
+                if (totalAttemptsLeft <= 0 && mode === 'hard') {
+                    feedbackEl.textContent = 'You are out of attempts! Please try again.';
+                } else {
+                    feedbackEl.textContent = `You scored ${score}/${questions.length}! Well done!`;
+                }
+                feedbackEl.style.fontSize = '1.5em';
+            }
+        }
+
+        // Handle answer selection
+        function selectAnswer(e) {
+            if (!acceptingAnswers || totalAttemptsLeft <= 0) return;
+            const selectedBtn = e.target;
+            const correct = selectedBtn.textContent === currentQuestion.a;
+            acceptingAnswers = false;
+
+            // Feedback
+            if (correct) {
+                feedbackEl.textContent = 'Correct!';
+                selectedBtn.style.backgroundColor = '#4CAF50';
+                score++;
+            } else {
+                feedbackEl.textContent = `Incorrect! The correct answer is: ${currentQuestion.a}`;
+                selectedBtn.style.backgroundColor = '#ff4444';
+                totalAttemptsLeft--;
+                attemptsLeftEl.textContent = `Attempts left: ${totalAttemptsLeft}`;
+            }
+
+            // Update attempts counter in hard mode
+            if (mode === 'hard') {
+                attemptsLeftEl.textContent = `Attempts left: ${totalAttemptsLeft}`;
+            }
+
+            // Disable next button temporarily
+            nextBtn.disabled = true;
+
+            // Check if out of attempts
+            if (totalAttemptsLeft <= 0 && mode === 'hard') {
+                quizContainer.style.display = 'none';
+                nextBtn.style.display = 'none';
+                feedbackEl.textContent = 'You are out of attempts! Please try again.';
+            }
+
+            // Re-enable next button after 1 second
+            setTimeout(() => {
+                acceptingAnswers = true;
+                nextBtn.disabled = false;
+            }, 1000);
+        }
+
+        // Reset state between questions
+        function resetState() {
+            while (optionsEl.firstChild) {
+                optionsEl.removeChild(optionsEl.firstChild);
+            }
+            feedbackEl.textContent = '';
+            document.querySelectorAll('.option-btn').forEach(btn => {
+                btn.style.backgroundColor = '#4CAF50';
+            });
+            nextBtn.disabled = true;
+        }
+
+        // Next question logic
+        function nextQuestion() {
+            if (availableQuestions.length > 0 && totalAttemptsLeft > 0) {
+                setNextQuestion();
+            }
+        }
+
+        // Back button
+        function goBack() {
+            window.location.href = 'quiz-greetings-difficulty-en.html'; // Fix typo: "difficulty" → "difficulty"
+        }
+
+        // Initialize quiz
+        function startQuiz() {
+            setNextQuestion();
+        }
+        startQuiz();
+    </script>
+</body>
+</html>

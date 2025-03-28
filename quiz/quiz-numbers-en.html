@@ -66,110 +66,109 @@
             { q: "How do you say '20'?", a: "ʿishrun", options: ["ʿashra", "timāni", "tisʿ", "arbāʿ"] }
         ];
 
+        // Quiz Logic (3 total attempts)
         const urlParams = new URLSearchParams(window.location.search);
         const mode = urlParams.get('mode') || 'unlimited';
-        let attemptsLeft = mode === 'hard' ? 3 : Infinity;
-        let currentAttempts = 0;
-        let score = 0;
-        let questionCount = 0;
-        let availableQuestions = [...questionsEN];
+        let totalAttemptsLeft = mode === 'hard' ? 3 : Infinity;
         let currentQuestion = {};
+        let acceptingAnswers = true;
+        let score = 0;
+        let questionNumber = 0;
+        let availableQuestions = [...questionsEN]; // Copy questions array
 
-        const questionEl = document.getElementById("question");
-        const optionsEl = document.getElementById("options");
-        const progressText = document.getElementById("progress");
-        const feedbackEl = document.getElementById("feedback");
-        const nextBtn = document.getElementById("next-btn");
-        const attemptsLeftEl = document.getElementById("attempts-left");
+        const quizContainer = document.getElementById('quiz-container');
+        const questionEl = document.getElementById('question');
+        const optionsEl = document.getElementById('options');
+        const progressText = document.getElementById('progress');
+        const feedbackEl = document.getElementById('feedback');
+        const nextBtn = document.getElementById('next-btn');
+        const attemptsLeftEl = document.getElementById('attempts-left');
 
-        // Show attempt counter only in hard mode
+        // Show attempts counter only in hard mode
         if (mode === 'hard') {
             attemptsLeftEl.style.display = 'block';
         }
 
-        // Shuffle functions
+        // Shuffle questions and options
         function shuffleArray(array) {
             return array.sort(() => Math.random() - 0.5);
         }
 
-        // Display next question
+        // Set next question
         function setNextQuestion() {
             resetState();
-            if (availableQuestions.length > 0) {
-                questionCount++;
-                progressText.textContent = `Question ${questionCount} of 20`;
+            if (availableQuestions.length > 0 && totalAttemptsLeft > 0) {
+                questionNumber++;
+                progressText.textContent = `Question ${questionNumber} of 20`;
                 
                 // Pick random question
                 const questionIndex = Math.floor(Math.random() * availableQuestions.length);
                 currentQuestion = availableQuestions[questionIndex];
                 questionEl.textContent = currentQuestion.q;
 
-                // Prepare options (shuffle and include correct answer)
-                const allOptions = shuffleArray([...currentQuestion.options, currentQuestion.a]);
+                // Shuffle options + add correct answer
+                const options = shuffleArray([...currentQuestion.options, currentQuestion.a]);
                 optionsEl.innerHTML = '';
-                allOptions.forEach(option => {
-                    const btn = document.createElement("button");
-                    btn.textContent = option;
-                    btn.classList.add("site-button", "option-btn");
-                    btn.addEventListener("click", selectAnswer);
-                    optionsEl.appendChild(btn);
+                options.forEach(option => {
+                    const button = document.createElement('button');
+                    button.textContent = option;
+                    button.classList.add('site-button', 'option-btn');
+                    button.addEventListener('click', selectAnswer);
+                    optionsEl.appendChild(button);
                 });
-
-                // Reset attempts for new question
-                currentAttempts = 0;
-                if (mode === 'hard') {
-                    attemptsLeftEl.textContent = `Attempts left: ${attemptsLeft}`;
-                }
 
                 availableQuestions.splice(questionIndex, 1); // Remove used question
             } else {
-                // Quiz completed
-                showCompletionMessage();
+                // Quiz completed or out of attempts
+                quizContainer.style.display = 'none';
+                nextBtn.style.display = 'none';
+                if (totalAttemptsLeft <= 0 && mode === 'hard') {
+                    feedbackEl.textContent = 'You are out of attempts! Please try again.';
+                } else {
+                    feedbackEl.textContent = `You scored ${score}/${questionsEN.length}! Well done!`;
+                }
+                feedbackEl.style.fontSize = '1.5em';
             }
         }
 
         // Handle answer selection
         function selectAnswer(e) {
-            if (!acceptingAnswers) return;
+            if (!acceptingAnswers || totalAttemptsLeft <= 0) return;
             const selectedBtn = e.target;
             const correct = selectedBtn.textContent === currentQuestion.a;
             acceptingAnswers = false;
 
-            // Feedback logic
+            // Feedback
             if (correct) {
-                feedbackEl.textContent = "Correct!";
-                selectedBtn.style.backgroundColor = "#4CAF50";
+                feedbackEl.textContent = 'Correct!';
+                selectedBtn.style.backgroundColor = '#4CAF50';
                 score++;
-                currentAttempts = 0; // Reset attempts
             } else {
-                // Always show correct answer
-                const errorMessage = `Incorrect! The correct answer is: ${currentQuestion.a}`;
-                feedbackEl.textContent = errorMessage;
-                selectedBtn.style.backgroundColor = "#ff4444";
-
-                if (mode === 'hard') {
-                    currentAttempts++;
-                    attemptsLeftEl.textContent = `Attempts left: ${attemptsLeft - currentAttempts}`;
-                }
+                feedbackEl.textContent = `Incorrect! The correct answer is: ${currentQuestion.a}`;
+                selectedBtn.style.backgroundColor = '#ff4444';
+                totalAttemptsLeft--;
+                attemptsLeftEl.textContent = `Attempts left: ${totalAttemptsLeft}`;
             }
 
-            // Disable next button until next question
+            // Update attempts counter in hard mode
+            if (mode === 'hard') {
+                attemptsLeftEl.textContent = `Attempts left: ${totalAttemptsLeft}`;
+            }
+
+            // Disable next button temporarily
             nextBtn.disabled = true;
 
-            // In hard mode: Block progress after 3 wrong attempts
-            if (mode === 'hard' && currentAttempts >= attemptsLeft) {
-                // Clear options and force next question
-                optionsEl.innerHTML = '';
-                nextBtn.disabled = false;
-                setTimeout(() => setNextQuestion(), 1000); // Wait 1 second before moving
+            // Check if out of attempts
+            if (totalAttemptsLeft <= 0 && mode === 'hard') {
+                quizContainer.style.display = 'none';
+                nextBtn.style.display = 'none';
+                feedbackEl.textContent = 'You are out of attempts! Please try again.';
             }
 
-            // Re-enable answer selection after 1 second
+            // Re-enable next button after 1 second
             setTimeout(() => {
                 acceptingAnswers = true;
-                if (correct || (mode === 'hard' && currentAttempts >= attemptsLeft)) {
-                    nextBtn.disabled = false;
-                }
+                nextBtn.disabled = false;
             }, 1000);
         }
 
@@ -178,37 +177,30 @@
             while (optionsEl.firstChild) {
                 optionsEl.removeChild(optionsEl.firstChild);
             }
-            feedbackEl.textContent = "";
-            document.querySelectorAll(".option-btn").forEach(btn => {
-                btn.style.backgroundColor = "#4CAF50";
+            feedbackEl.textContent = '';
+            document.querySelectorAll('.option-btn').forEach(btn => {
+                btn.style.backgroundColor = '#4CAF50';
             });
             nextBtn.disabled = true;
         }
 
-        // Show completion message
-        function showCompletionMessage() {
-            const container = document.getElementById("quiz-container");
-            container.style.display = "none";
-            nextBtn.style.display = "none";
-            feedbackEl.textContent = "You did it! Well done!";
-            feedbackEl.style.fontSize = "1.5em"; // Make message stand out
+        // Next question logic
+        function nextQuestion() {
+            if (availableQuestions.length > 0 && totalAttemptsLeft > 0) {
+                setNextQuestion();
+            }
         }
 
-        // Navigation
+        // Back button
         function goBack() {
-            window.location.href = "quiz-numbers-difficulty-en.html"; // Back to difficulty selection
+            window.location.href = 'quiz-numbers-difficulty-en.html'; // Ensure correct path
         }
 
         // Initialize quiz
-        let acceptingAnswers = true;
-        function nextQuestion() {
-            if (availableQuestions.length > 0) {
-                setNextQuestion();
-            } else {
-                showCompletionMessage();
-            }
+        function startQuiz() {
+            setNextQuestion();
         }
-        nextQuestion(); // Start quiz immediately
+        startQuiz();
     </script>
 </body>
 </html>
