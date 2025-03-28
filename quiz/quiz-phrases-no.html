@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Utsagnsquiz - Lær Bagdad-arabisk</title>
+    <link rel="stylesheet" href="../style.css">
+    <style>
+        #attempts-left {
+            margin: 15px 0;
+            color: #ff4444;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Lær Bagdad-arabisk</h1>
+    </header>
+    <main>
+        <div class="welcome-container">
+            <h2>Utsagnsquiz: 1–30</h2>
+            <div id="progress">Spørsmål 1 av 30</div>
+            <div id="attempts-left" style="display: none;">Forsøk igjen: 5</div>
+        </div>
+        <div id="quiz-container">
+            <div id="question"></div>
+            <div id="options"></div>
+        </div>
+        <div id="feedback"></div>
+        <button class="site-button" onclick="nextQuestion()" id="next-btn" disabled>Neste</button>
+        <!-- Back Button -->
+        <div class="back-to-home">
+            <button class="site-button" onclick="goBack()">Tilbake til vanskelighetsgrad</button>
+        </div>
+    </main>
+    <footer>
+        <p>&copy; 2025 Lær Bagdad-arabisk</p>
+    </footer>
+    <script>
+        // Quiz Data (Norwegian translations)
+        const questions = [
+            // Neutral questions
+            { 
+                q: "Hvordan sier du 'Unnskyld meg / Beklager' på bagdad-arabisk?", 
+                a: "izizin", 
+                options: ["shlounak?", "afwan", "Allāhu yishkurak", "sabaħ al-khayr"] 
+            },
+            { 
+                q: "Hvordan sier du 'Tusen takk'?", 
+                a: "shukran jazīlan", 
+                options: ["afwan", "Allāhu yishkurak", "ma fahim", "tikrar?"] 
+            },
+            { 
+                q: "Hvordan svarer du på 'Takk'?", 
+                a: "afwan", 
+                options: ["izizin", "shlounich?", "jūʿān", "Allāhu yishkurak"] 
+            },
+            { 
+                q: "Hva betyr 'ماكو مشكلة'?", 
+                a: "Det er greit / Ingen problem", 
+                options: ["Jeg forstår ikke", "Jeg er sulten", "Hvor mye koster dette?", "Ta vare på deg"] 
+            },
+            { 
+                q: "Hvordan sier du 'Gjør vi det!'?", 
+                a: "nirūḥ", 
+                options: ["istannā shway", "taʿālī", "shkadd hāyi?", "Allāhu yibāraklik"] 
+            },
+            { 
+                q: "Hvordan spør 'Hva betyr dette?'", 
+                a: "wish maʿnahā?", 
+                options: ["shloun al-ʿayla?", "tikrar?", "ma fahima", "arīd hāyi"] 
+            },
+            { 
+                q: "Hvordan sier du 'Hvor er toalettet?'", 
+                a: "wayn al-ḥammām?", 
+                options: ["shlounak al-yawm?", "shkadd hāyi?", "taʿālā", "Allāhu yishkurich"] 
+            },
+            { 
+                q: "Hvordan sier du 'Hvor mye koster dette?'", 
+                a: "shkadd hāyi?", 
+                options: ["tikrari?", "jūʿāna", "ma fahim", "nirūḥ"] 
+            },
+            { 
+                q: "Hvordan sier du 'Vent litt'?", 
+                a: "istannā shway", 
+                options: ["tisāʿidnī?", "taʿālī", "shlounich?", "masā’ al-khayr"] 
+            },
+            { 
+                q: "Hvordan spør 'Hva er feil?'", 
+                a: "wish al-mushkila?", 
+                options: ["shlounak?", "ma fahima", "Allāhu yahdik", "sabaħ al-khayr"] 
+            },
+            // Mannspesifikke spørsmål
+            { 
+                q: "Hvordan sier du 'Jeg forstår ikke' (mann)?", 
+                a: "ma fahim", 
+                options: ["ma fahima", "tikrar?", "jūʿāna", "shlounak?"] 
+            },
+            { 
+                q: "Hvordan spør 'Kan du genta det?' til en mann?", 
+                a: "tikrar?", 
+                options: ["tikrari?", "shlounich?", "Allāhu yishkurak", "arīd hāyi"] 
+            },
+            { 
+                q: "Hvordan sier du 'Jeg er sulten' (mann)?", 
+                a: "jūʿān", 
+                options: ["ʿaṭashān", "shlounich?", "ma fahima", "shkadd hāyi?"] 
+            },
+            { 
+                q: "Hvordan sier du 'Jeg er tørst' (mann)?", 
+                a: "ʿaṭashān", 
+                options: ["jūʿāna", "tikrari?", "ma fahim", "Allāhu yishkurich"] 
+            },
+            { 
+                q: "Hvordan sier du 'Jeg vil ha dette' (mann)?", 
+                a: "arīd hāyi", 
+                options: ["arīda hāyi", "ma fahima", "tisāʿidnī?", "shlounich?"] 
+            },
+            { 
+                q: "Hvordan sier du 'Kan du hjelpe meg?' (mann)", 
+                a: "tisāʿidnī?", 
+                options: ["tikrar?", "shlounak?", "jūʿāna", "ma fahima"] 
+            },
+            { 
+                q: "Hvordan sier du 'Jeg vet ikke' (mann)?", 
+                a: "ma adrī", 
+                options: ["ma adrīya", "shlounich?", "Allāhu yishkurak", "jūʿān"] 
+            },
+            { 
+                q: "Hvordan sier du 'Kom her' (mann)?", 
+                a: "taʿālā", 
+                options: ["taʿālī", "shlounich?", "ʿaṭashāna", "ma fahima"] 
+            },
+            { 
+                q: "Hvordan sier du 'Ta vare på deg selv' (mann)?", 
+                a: "istr ʿalā ḥālik", 
+                options: ["istr ʿalā ḥālich", "shlounak?", "afwan", "Allāhu yishkurich"] 
+            },
+            { 
+                q: "Hvordan spør 'Hva betyr dette?'", 
+                a: "wish maʿnahā?", 
+                options: ["shloun al-ʿayla?", "ma fahim", "tikrar?", "arīda hāyi"] 
+            },
+            // Kvinnespesifikke spørsmål
+            { 
+                q: "Hvordan sier du 'Jeg forstår ikke' (kvinne)?", 
+                a: "ma fahima", 
+                options: ["ma fahim", "tikrari?", "jūʿān", "shlounich?"] 
+            },
+            { 
+                q: "Hvordan spør 'Kan du genta det?' til en kvinne?", 
+                a: "tikrari?", 
+                options: ["tikrar?", "shlounak?", "ʿaṭashāna", "Allāhu yishkurak"] 
+            },
+            { 
+                q: "Hvordan sier du 'Jeg er sulten' (kvinne)?", 
+                a: "jūʿāna", 
+                options: ["jūʿān", "ʿaṭashān", "ma fahima", "shlounich?"] 
+            },
+            { 
+                q: "Hvordan sier du 'Jeg er tørst' (kvinne)?", 
+                a: "ʿaṭashāna", 
+                options: ["ʿaṭashān", "ma fahim", "shlounak?", "tikrar?"] 
+            },
+            { 
+                q: "Hvordan sier du 'Jeg vil ha dette' (kvinne)?", 
+                a: "arīda hāyi", 
+                options: ["arīd hāyi", "ma fahima", "tisāʿidnī?", "shlounich?"] 
+            },
+            { 
+                q: "Hvordan sier du 'Kan du hjelpe meg?' (kvinne)", 
+                a: "tisāʿidnī?", 
+                options: ["tikrari?", "shlounak?", "ma fahima", "jūʿān"] 
+            },
+            { 
+                q: "Hvordan sier du 'Jeg vet ikke' (kvinne)?", 
+                a: "ma adrīya", 
+                options: ["ma adrī", "shlounich?", "Allāhu yishkurich", "ʿaṭashāna"] 
+            },
+            { 
+                q: "Hvordan sier du 'Kom her' (kvinne)?", 
+                a: "taʿālī", 
+                options: ["taʿālā", "shlounak?", "ma fahima", "arīd hāyi"] 
+            },
+            { 
+                q: "Hvordan sier du 'Ta vare på deg selv' (kvinne)?", 
+                a: "istr ʿalā ḥālich", 
+                options: ["istr ʿalā ḥālik", "shlounich?", "afwan", "Allāhu yishkurak"] 
+            },
+            { 
+                q: "Hvordan spør 'Hva betyr dette?'", 
+                a: "wish maʿnahā?", 
+                options: ["shloun al-ʿayla?", "ma fahima", "tikrari?", "arīd hāyi"] 
+            },
+            // Kjønnsnøytrale spørsmål
+            { 
+                q: "Hvordan sier du 'Jeg forstår ikke' (neutral)?", 
+                a: "ma fahim / ma fahima", 
+                options: ["shlounak?", "afwan", "Allāhu yishkurak", "sabaħ al-khayr"] 
+            },
+            { 
+                q: "Hvordan sier du 'Jeg er tørst' (neutral)?", 
+                a: "ʿaṭashān / ʿaṭashāna", 
+                options: ["jūʿān", "ma fahima", "shlounich?", "tikrar?"] 
+            },
+            { 
+                q: "Hvordan spør 'Hvor mye koster dette?'", 
+                a: "shkadd hāyi?", 
+                options: ["shlounak?", "ma fahim", "tikrari?", "arīda hāyi"] 
+            },
+            { 
+                q: "Hvordan sier du 'Gjør vi det!'?", 
+                a: "nirūḥ", 
+                options: ["istannā shway", "taʿālī", "shkadd hāyi?", "Allāhu yishkurak"] 
+            },
+            { 
+                q: "Hvordan spør 'Hva er feil?'", 
+                a: "wish al-mushkila?", 
+                options: ["shlounich?", "ma fahima", "Allāhu yahdich", "sabaħ al-khayr"] 
+            },
+            { 
+                q: "Hvordan sier du 'Pass på'?", 
+                a: "intabih", 
+                options: ["taʿālā", "shlounak?", "ma fahim", "Allāhu yishkurak"] 
+            },
+            { 
+                q: "Hvordan sier du 'Det er greit'?", 
+                a: "mākū mushkila", 
+                options: ["ma fahima", "arīd hāyi", "tikrar?", "sabaħ al-khayr"] 
+            },
+            { 
+                q: "Hvordan sier du 'Vent litt'?", 
+                a: "istannā shway", 
+                options: ["taʿālī", "shlounich?", "ma fahim", "Allāhu yishkurich"] 
+            },
+            { 
+                q: "Hvordan sier du 'Kom her' (kjønnsnøytralt)?", 
+                a: "taʿālā / taʿālī", 
+                options: ["shlounak?", "ma fahima", "tikrari?", "arīda hāyi"] 
+            },
+            { 
+                q: "Hvordan sier du 'Jeg vet ikke' (kjønnsnøytralt)?", 
+                a: "ma adrī / ma adrīya", 
+                options: ["ma fahim", "shlounich?", "Allāhu yishkurak", "jūʿān"] 
+            },
+            { 
+                q: "Hvordan sier du 'Tusen takk'?", 
+                a: "shukran jazīlan", 
+                options: ["afwan", "ma fahima", "tikrar?", "Allāhu yishkurak"] 
+            },
+            { 
+                q: "Hvordan spør 'Hva betyr dette?'", 
+                a: "wish maʿnahā?", 
+                options: ["shloun al-ʿayla?", "ma fahima", "tikrari?", "arīd hāyi"] 
+            },
+            { 
+                q: "Hvordan sier du 'Ta vare på deg selv' (kjønnsnøytralt)?", 
+                a: "istr ʿalā ḥālik / istr ʿalā ḥālich", 
+                options: ["ma fahima", "shlounak?", "tikrari?", "arīda hāyi"] 
+            },
+            { 
+                q: "Hvordan sier du 'Jeg er tørst' (neutral)?", 
+                a: "ʿaṭashān / ʿaṭashāna", 
+                options: ["jūʿān", "ma fahim", "shlounich?", "tikrar?"] 
+            },
+            { 
+                q: "Hvordan sier du 'Jeg er sulten' (neutral)?", 
+                a: "jūʿān / jūʿāna", 
+                options: ["ʿaṭashān", "ma fahima", "shlounak?", "tikrar?"] 
+            },
+            { 
+                q: "Hvordan spør 'Kan du hjelpe meg?' (kjønnsnøytralt)", 
+                a: "tisāʿidnī?", 
+                options: ["tikrari?", "shlounich?", "ma fahima", "arīda hāyi"] 
+            },
+            { 
+                q: "Hvordan sier du 'Det er greit' (neutral)?", 
+                a: "mākū mushkila", 
+                options: ["ma fahima", "shlounak?", "tikrar?", "Allāhu yishkurak"] 
+            },
+            { 
+                q: "Hvordan spør 'Hvor mye koster dette?' (neutral)", 
+                a: "shkadd hāyi?", 
+                options: ["shlounak?", "ma fahim", "tikrari?", "arīd hāyi"] 
+            },
+            { 
+                q: "Hvordan sier du 'Gjør vi det!' (neutral)?", 
+                a: "nirūḥ", 
+                options: ["istannā shway", "taʿālī", "shlounich?", "Allāhu yishkurak"] 
+            },
+            { 
+                q: "Hvordan spør 'Hva er feil?' (neutral)", 
+                a: "wish al-mushkila?", 
+                options: ["shlounak?", "ma fahima", "tikrar?", "arīda hāyi"] 
+            },
+            { 
+                q: "Hvordan sier du 'Vær så god'?", 
+                a: "afwan", 
+                options: ["izizin", "shlounich?", "jūʿān", "Allāhu yishkurak"] 
+            },
+            { 
+                q: "Hvordan sier du 'Jeg forstår ikke' (neutral)?", 
+                a: "ma fahim / ma fahima", 
+                options: ["shlounak?", "afwan", "Allāhu yishkurak", "sabaħ al-khayr"] 
+            },
+            { 
+                q: "Hvordan spør 'Hva betyr dette?'", 
+                a: "wish maʿnahā?", 
+                options: ["shloun al-ʿayla?", "ma fahima", "tikrari?", "arīd hāyi"] 
+            },
+            { 
+                q: "Hvordan sier du 'Ta vare på deg selv' (kjønnsnøytralt)?", 
+                a: "istr ʿalā ḥālik / istr ʿalā ḥālich", 
+                options: ["ma fahima", "shlounak?", "tikrari?", "arīda hāyi"] 
+            },
+            { 
+                q: "Hvordan spør 'Kan du genta det?'", 
+                a: "tikrar? / tikrari?", 
+                options: ["shlounich?", "ma fahim", "Allāhu yishkurak", "jūʿān"] 
+            },
+            { 
+                q: "Hvordan sier du 'Pass på' (neutral)?", 
+                a: "intabih", 
+                options: ["taʿālā", "shlounak?", "ma fahima", "Allāhu yishkurich"] 
+            },
+            { 
+                q: "Hvordan sier du 'Jeg vil ha dette' (neutral)?", 
+                a: "arīd hāyi / arīda hāyi", 
+                options: ["ma fahim", "shlounich?", "tikrari?", "afwan"] 
+            },
+            { 
+                q: "Hvordan spør 'Hvor er toalettet?'", 
+                a: "wayn al-ḥammām?", 
+                options: ["shloun al-ʿayla?", "ma fahima", "tikrar?", "arīd hāyi"] 
+            },
+            { 
+                q: "Hvordan sier du 'Tusen takk' (neutral)?", 
+                a: "shukran jazīlan", 
+                options: ["afwan", "ma fahima", "tikrari?", "Allāhu yishkurak"] 
+            }
+        ];
+
+        // Quiz Logic (5 attempts in hard mode)
+        const urlParams = new URLSearchParams(window.location.search);
+        const mode = urlParams.get('mode') || 'unlimited';
+        let totalAttemptsLeft = mode === 'hard' ? 5 : Infinity; // Changed to 5 attempts
+        let currentQuestion = {};
+        let acceptingAnswers = true;
+        let score = 0;
+        let questionNumber = 0;
+        let availableQuestions = [...questions]; // Copy questions array
+        const quizContainer = document.getElementById('quiz-container');
+        const questionEl = document.getElementById('question');
+        const optionsEl = document.getElementById('options');
+        const progressText = document.getElementById('progress');
+        const feedbackEl = document.getElementById('feedback');
+        const nextBtn = document.getElementById('next-btn');
+        const attemptsLeftEl = document.getElementById('attempts-left');
+
+        // Show attempts counter only in hard mode
+        if (mode === 'hard') {
+            attemptsLeftEl.style.display = 'block';
+        }
+
+        // Shuffle questions and options
+        function shuffleArray(array) {
+            return array.sort(() => Math.random() - 0.5);
+        }
+
+        // Set next question
+        function setNextQuestion() {
+            resetState();
+            if (availableQuestions.length > 0 && totalAttemptsLeft > 0) {
+                questionNumber++;
+                progressText.textContent = `Spørsmål ${questionNumber} av ${questions.length}`;
+                // Pick random question
+                const questionIndex = Math.floor(Math.random() * availableQuestions.length);
+                currentQuestion = availableQuestions[questionIndex];
+                questionEl.textContent = currentQuestion.q;
+                // Shuffle options + add correct answer
+                const options = shuffleArray([...currentQuestion.options, currentQuestion.a]);
+                optionsEl.innerHTML = '';
+                options.forEach(option => {
+                    const button = document.createElement('button');
+                    button.textContent = option;
+                    button.classList.add('site-button', 'option-btn');
+                    button.addEventListener('click', selectAnswer);
+                    optionsEl.appendChild(button);
+                });
+                availableQuestions.splice(questionIndex, 1); // Remove used question
+            } else {
+                // Quiz completed or out of attempts
+                quizContainer.style.display = 'none';
+                nextBtn.style.display = 'none';
+                if (totalAttemptsLeft <= 0 && mode === 'hard') {
+                    feedbackEl.textContent = 'Du har brukt alle forsøk! Prøv igjen.';
+                } else {
+                    feedbackEl.textContent = `Du scorede ${score}/${questions.length}! Godt jobbet!`;
+                }
+                feedbackEl.style.fontSize = '1.5em';
+            }
+        }
+
+        // Handle answer selection
+        function selectAnswer(e) {
+            if (!acceptingAnswers || totalAttemptsLeft <= 0) return;
+            const selectedBtn = e.target;
+            const correct = selectedBtn.textContent === currentQuestion.a;
+            acceptingAnswers = false;
+            // Feedback
+            if (correct) {
+                feedbackEl.textContent = 'Riktig!';
+                selectedBtn.style.backgroundColor = '#4CAF50';
+                score++;
+            } else {
+                feedbackEl.textContent = `Feil! Riktig svar var: ${currentQuestion.a}`;
+                selectedBtn.style.backgroundColor = '#ff4444';
+                totalAttemptsLeft--;
+                attemptsLeftEl.textContent = `Forsøk igjen: ${totalAttemptsLeft}`;
+            }
+            // Update attempts counter in hard mode
+            if (mode === 'hard') {
+                attemptsLeftEl.textContent = `Forsøk igjen: ${totalAttemptsLeft}`;
+            }
+            // Disable next button temporarily
+            nextBtn.disabled = true;
+            // Check if out of attempts
+            if (totalAttemptsLeft <= 0 && mode === 'hard') {
+                quizContainer.style.display = 'none';
+                nextBtn.style.display = 'none';
+                feedbackEl.textContent = 'Du har brukt alle forsøk! Prøv igjen.';
+            }
+            // Re-enable next button after 1 millisecond
+            setTimeout(() => {
+                acceptingAnswers = true;
+                nextBtn.disabled = false;
+            }, 1);
+        }
+
+        // Reset state between questions
+        function resetState() {
+            while (optionsEl.firstChild) {
+                optionsEl.removeChild(optionsEl.firstChild);
+            }
+            feedbackEl.textContent = '';
+            document.querySelectorAll('.option-btn').forEach(btn => {
+                btn.style.backgroundColor = '#4CAF50';
+            });
+            nextBtn.disabled = true;
+        }
+
+        // Next question logic
+        function nextQuestion() {
+            if (availableQuestions.length > 0 && totalAttemptsLeft > 0) {
+                setNextQuestion();
+            }
+        }
+
+        // Back button
+        function goBack() {
+            window.location.href = "quiz-phrases-difficulty-no.html"; // Fixed typo: "difficult" → "difficulty"
+        }
+
+        // Initialize quiz
+        function startQuiz() {
+            setNextQuestion();
+        }
+        startQuiz();
+    </script>
+</body>
+</html>

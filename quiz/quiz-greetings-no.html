@@ -21,7 +21,7 @@
         <div class="welcome-container">
             <h2>Hilsenerquiz: 1–30</h2>
             <div id="progress">Spørsmål 1 av 30</div>
-            <div id="forsøk-left" style="display: none;">Forsøk igjen: 3</div>
+            <div id="forsøk-left" style="display: none;">Forsøk igjen: 5</div>
         </div>
 
         <div id="quiz-container">
@@ -298,10 +298,10 @@
             }
         ];
 
-        // Quiz Logic (3 total forsøk)
+        // Quiz Logic (5 total forsøk)
         const urlParams = new URLSearchParams(window.location.search);
         const mode = urlParams.get('mode') || 'unlimited';
-        let totalForsøkIgjen = mode === 'hard' ? 3 : Infinity;
+        let totalForsøkIgjen = mode === 'hard' ? 5 : Infinity;
         let nåværendeSpørsmål = {};
         let akseptererSvar = true;
         let poeng = 0;
@@ -397,11 +397,11 @@
                 feedbackEl.textContent = 'Du har brukt alle forsøkene! Vennligst prøv igjen.';
             }
 
-            // Aktiver knapp etter 1 sekund
+            // Re-enable next button after 1 millisecond
             setTimeout(() => {
-                akseptererSvar = true;
-                nesteBtn.disabled = false;
-            }, 1000);
+                acceptingAnswers = true;
+                nextBtn.disabled = false;
+            }, 1);
         }
 
         // Nullstill mellom spørsmål

@@ -165,11 +165,11 @@
                 feedbackEl.textContent = 'You are out of attempts! Please try again.';
             }
 
-            // Re-enable next button after 1 second
+            // Re-enable next button after 1 millisecond
             setTimeout(() => {
                 acceptingAnswers = true;
                 nextBtn.disabled = false;
-            }, 1000);
+            }, 1);
         }
 
         // Reset state between questions

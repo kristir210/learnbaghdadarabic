@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Velg vanskelighetsgrad - Hilsninger quiz</title>
+    <title>Velg vanskelighetsgrad - Fraser quiz</title>
     <link rel="stylesheet" href="../style.css">
 </head>
 <body>
@@ -12,14 +12,14 @@
     </header>
     <main>
         <div class="welcome-container">
-            <h2>Vanskelighetsgrad for hilsninger quiz</h2>
-            <p>Velg ønsket nivå:</p>
+            <h2>Fraser quiz - Velg vanskelighetsgrad</h2>
+            <p>Velg ønsket spillemodus:</p>
         </div>
         
         <!-- Difficulty Buttons -->
         <div class="button-group">
             <button class="site-button" onclick="startUnlimited()">Uendelig forsøk</button>
-            <button class="site-button" onclick="startHardMode()">5 forsøk utfordring</button>
+            <button class="site-button" onclick="startHardMode()">Utfordring: 5 forsøk</button>
         </div>
 
         <!-- Back Button -->
@@ -33,16 +33,16 @@
 
     <script>
         function goBack() {
-            window.location.href = "index-no.html"; // Back to Norwegian quiz categories
+            window.location.href = "index-no.html"; // Back to Norwegian quiz menu
         }
 
         // Redirect based on difficulty
         function startUnlimited() {
-            window.location.href = "quiz-greetings-no.html?mode=unlimited";
+            window.location.href = "quiz-phrases-no.html?mode=unlimited";
         }
 
         function startHardMode() {
-            window.location.href = "quiz-greetings-no.html?mode=hard";
+            window.location.href = "quiz-phrases-no.html?mode=hard";
         }
     </script>
 </body>

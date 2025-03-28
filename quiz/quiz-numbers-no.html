@@ -165,11 +165,11 @@
                 feedbackEl.textContent = 'Du har brukt alle forsøkene! Vennligst prøv igjen.';
             }
 
-            // Aktiver knapp etter 1 sekund
+            // Re-enable next button after 1 millisecond
             setTimeout(() => {
-                akseptererSvar = true;
-                nesteBtn.disabled = false;
-            }, 1000);
+                acceptingAnswers = true;
+                nextBtn.disabled = false;
+            }, 1);
         }
 
         // Nullstill mellom spørsmål
